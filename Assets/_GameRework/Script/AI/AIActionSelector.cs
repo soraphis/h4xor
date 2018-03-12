@@ -27,7 +27,7 @@ namespace _Game.ScriptRework.AI {
         }
 
         private EnemyActor actor;
-        private AIState state;
+        public AIState state;
         private PatrouilleBehaviour patrouille;
         private int lastWaypoint = 0;
         private int currentWaypoint = 0;
@@ -53,7 +53,7 @@ namespace _Game.ScriptRework.AI {
         }
         
         private bool isPlayerVisible() {
-            return false;
+            return actor.visibleArea.IsPlayerVisible();
         }
 
         /// <returns>An A* Path to the Target, from the AI position, considering the Speed Attribute</returns>
@@ -68,7 +68,8 @@ namespace _Game.ScriptRework.AI {
             if (state == AIState.Alterted) {
                 if (isPlayerVisible()) {
                     Debug.Log("attack!");
-                    return new IdleAction();
+                    return new AttackAction(actor.gameObject, PlayerActor.Instance.gameObject, actor.attackPrefab, actor.stats.currentStats.atk);
+                    
                 } else {
                     // chase!
                     Debug.Log("chase");

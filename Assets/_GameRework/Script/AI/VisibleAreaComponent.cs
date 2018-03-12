@@ -55,14 +55,21 @@ namespace _Game.ScriptRework.AI {
 
 
         private void Update() {
-            RecalculateVisibleArea(true); // todo: remove, its just debug
+            // RecalculateVisibleArea(true); // todo: remove, its just debug
             
             
             if(mesh == null || material == null) return;
             Graphics.DrawMesh(mesh, Matrix4x4.Translate(GridUtil.GridToWorld(enemyActor.GridPosition)), material, 0, Camera.current, 0, new MaterialPropertyBlock(), ShadowCastingMode.Off, receiveShadows:false);
-            
-            
-            if(visibleArea == null) return;
+
+            if (IsPlayerVisible()) {
+                    // todo: this should not be needed every frame ... 
+                enemyActor.DoAlert();
+            }
+
+        }
+
+        public bool IsPlayerVisible() {
+            if(visibleArea == null) return false;
             
             var forward = new NVector2(this.transform.forward.To2DXZ());
             var right = new NVector2(forward.y, -forward.x);
@@ -71,11 +78,9 @@ namespace _Game.ScriptRework.AI {
             var dx = right.x * pgrid_pos.x + right.y * pgrid_pos.y + visibleArea.GetLength(0)/2;
             var dy = forward.x * pgrid_pos.x + forward.y * pgrid_pos.y;
             
-
-            if (visibleArea.GetLength(0) > dx && dx >= 0 && visibleArea.GetLength(1) > dy && dy >= 0 && visibleArea[dx, dy]) {
-                Debug.Log("ALERT!");
-            }
-            
+            return visibleArea.GetLength(0) > dx && dx >= 0 && 
+                   visibleArea.GetLength(1) > dy && dy >= 0 && 
+                   visibleArea[dx, dy];
         }
 
         /*void OnDrawGizmos() {

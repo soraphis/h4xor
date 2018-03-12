@@ -13,7 +13,9 @@ namespace _Game.ScriptRework {
         
         private MovementController movementController;
         [HideInInspector] public Attributes stats;
-
+        [HideInInspector] public VisibleAreaComponent visibleArea;
+        
+        public GameObject attackPrefab;
         private AIActionSelector actionSelector;
         
         public NVector2 GridPosition {
@@ -30,6 +32,7 @@ namespace _Game.ScriptRework {
         private void Awake() {
             movementController = GetComponent<MovementController>();
             stats = GetComponent<Attributes>();
+            visibleArea = GetComponent<VisibleAreaComponent>();
             actionSelector = new AIActionSelector(this);
         }
         
@@ -55,6 +58,10 @@ namespace _Game.ScriptRework {
             await action.Execute();
 
             ComponentsEnabled(false);
+        }
+
+        public void DoAlert() {
+            this.actionSelector.state = AIState.Alterted;
         }
     }
 }

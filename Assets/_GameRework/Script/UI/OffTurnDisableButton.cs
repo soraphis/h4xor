@@ -22,8 +22,8 @@ public class OffTurnDisableButton : MonoBehaviour {
 		PlayerActor.Instance.actionSelector.OnDisableSelector += OffTurn;
 	}
 
-	private void OnTurn() { button.interactable = true; }
-	private void OffTurn() { button.interactable = false; }
+	private void OnTurn() { if (isApplicationQuitting) return; button.interactable = true; }
+	private void OffTurn() { if (isApplicationQuitting) return; button.interactable = false; }
 	
 	
 	private bool isApplicationQuitting = false;

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Name: Enemy1AttributeSet
   m_EditorClassIdentifier: 
   attributes:
-    atk: 3
-    hp: 2
+    atk: 5
+    hp: 1
     def: 1
     awareness: 3
-    speed: 3
+    speed: 0

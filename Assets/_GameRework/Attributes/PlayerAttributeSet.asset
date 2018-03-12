@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attributes:
     atk: 1
-    hp: 2
-    def: 3
+    hp: 5
+    def: 0
     awareness: 4
     speed: 5

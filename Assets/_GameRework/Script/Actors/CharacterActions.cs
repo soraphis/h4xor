@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UniRx;
+using UnityEngine.EventSystems;
 
 namespace _Game.ScriptRework {
     
@@ -43,6 +47,43 @@ namespace _Game.ScriptRework {
             }
             return;
         }
+    }
+
+    public class AttackAction : CharacterAction {
+        private readonly GameObject self;
+        private readonly GameObject other;
+        private readonly GameObject attackPrefab;
+        private readonly int damage;
+
+        public AttackAction(GameObject self, GameObject other, GameObject attackPrefab, int damage) {
+            this.self = self;
+            this.other = other;
+            this.attackPrefab = attackPrefab;
+            this.damage = damage;
+        }
+
+        public override async Task Execute() {
+//            await Task.Run(() => {  });
+            var b = GameObject.Instantiate(attackPrefab, self.transform.position, Quaternion.identity);
+            
+            for (float f = 0; f < 1; f += 2*Time.deltaTime) {
+                b.transform.position = Vector3.Lerp(self.transform.position + Vector3.up, 
+                                                    other.transform.position + Vector3.up, 
+                    f);
+                
+                await Task.Run(() => new WaitForEndOfFrame());
+            }
+            
+            for (float f = 1; f < 3; f += 0.2f * f+Time.deltaTime) {
+                b.transform.localScale = Vector3.one * f;
+                await Task.Run(() => new WaitForEndOfFrame());
+            }
+
+            ExecuteEvents.Execute<ITakeDamageHandler>(other, null, (handler, data) => handler.TakeDamage(damage));
+            GameObject.Destroy(b);
+            
+        }
+
     }
     
 }

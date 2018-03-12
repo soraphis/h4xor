@@ -7,7 +7,7 @@ namespace _Game.ScriptRework {
     [RequireComponent(typeof(ActionSelectorSM))]
     [RequireComponent(typeof(MovementController))]
     [RequireComponent(typeof(Attributes))]
-    public class PlayerActor : Singleton<PlayerActor>, ITickBehaviour {
+    public class PlayerActor : Singleton<PlayerActor>, ITickBehaviour, ITakeDamageHandler {
 
         public bool clipToGrid = false;
         
@@ -50,6 +50,14 @@ namespace _Game.ScriptRework {
             await action.Execute();
 
             ComponentsEnabled(false);
+        }
+
+
+        public void TakeDamage(int value) {
+            this.stats.currentStats.hp -= value;
+            if (this.stats.currentStats.hp <= 0) {
+                
+            }
         }
     }
 }
