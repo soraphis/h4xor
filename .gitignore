@@ -6,6 +6,7 @@
 /Assets/AssetStoreTools*
 
 /Assets/Plugins/Editor/JetBrains*
+/Assets/ProCore/*
 
 # Visual Studio 2015 cache directory
 /.vs/
