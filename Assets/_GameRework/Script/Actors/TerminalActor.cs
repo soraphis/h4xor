@@ -13,7 +13,7 @@ public class TerminalActor : MonoBehaviour {
 
 	[Header("Hacking Config")] 
 	public string code; 
-	public float time; 
+	public int turns; 
 	
 	[Header("Other Stuff")]
 	[SerializeField] private Transform terminalField;

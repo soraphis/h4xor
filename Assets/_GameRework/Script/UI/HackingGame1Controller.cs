@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using ProBuilder2.Common;
 using TMPro;
 using UnityEngine;
@@ -14,16 +15,21 @@ public class HackingGame1Controller : MonoBehaviour {
 	public string code;
 	private int[] currentCode;
 
-	public float TimeLimit;
+	public int turns;
 	
 	[SerializeField] private Slider progressbar;
 	
+	[SerializeField] private RectTransform mainPanel;
+	[SerializeField] private TextMeshProUGUI turnsLeftText;
 	[SerializeField] private Image[] images;
 	[SerializeField] private Button[] buttons;
 	[SerializeField] private bool[] forwardButton;
+	
+	[SerializeField] private Color[] barColors;
 
 	private Coroutine activeTimer = null;
 
+	
 	public void OnValidate() {
 		images = images ?? new Image[9];
 		forwardButton = forwardButton ?? new bool[6];
@@ -46,7 +52,8 @@ public class HackingGame1Controller : MonoBehaviour {
 	public void OnEnable() {
 		if (TerminalActor.currentActiveTerminal != null) {
 			code = TerminalActor.currentActiveTerminal.code;
-			TimeLimit = TerminalActor.currentActiveTerminal.time;			
+			turns = TerminalActor.currentActiveTerminal.turns;
+			turnsLeftText.text = $"{turns} Turns Left";
 		}
 		
 		OnValidate();
@@ -68,34 +75,22 @@ public class HackingGame1Controller : MonoBehaviour {
 			PressButton(char_code[i]-'1', true);
 		}
 		
-		UpdateImageRotations();
-		if(activeTimer != null) StopCoroutine(activeTimer);
-		activeTimer = StartCoroutine(CountDown(TimeLimit));
+		var tr = this.transform as RectTransform;
+		tr.localScale = Vector3.one;
+		progressbar.colors = new ColorBlock(){colorMultiplier = 1, disabledColor = barColors[0]};
 		
-		PlayerActor.Instance.actionSelector.gameObject.SetActive(false);
+		UpdateImageRotations();
+
+		PlayerActor.Instance.actionSelector.enabled = false;
+
+		tr.DOScale(Vector3.zero, 0.1f).From();
+		tr.DOAnchorPos(Vector3.zero, 0.1f).From();
 	}
 
 	public void OnDisable() {
 		Debug.Log("disabled!");
-		if(activeTimer != null) StopCoroutine(activeTimer);
-		activeTimer = null;
-		
-		PlayerActor.Instance.actionSelector.gameObject.SetActive(true);
+		PlayerActor.Instance.actionSelector.enabled = true;
 		PlayerActor.Instance.actionSelector.UIActionDone(new IdleAction());
-	}
-
-	private IEnumerator CountDown(float time) {
-		var _t = time;
-		yield return null;
-		while (_t > 0) {
-			_t -= Time.deltaTime;
-			progressbar.value = _t / time;
-			
-			yield return null;
-		}
-		
-		Debug.Log("Time is up!");
-		this.gameObject.SetActive(false);
 	}
 
 	private void UpdateImageRotations() {
@@ -103,10 +98,38 @@ public class HackingGame1Controller : MonoBehaviour {
 			images[i].rectTransform.eulerAngles = new Vector3(0, 0, 90 * currentCode[i]);
 		}
 	}
+
+	public IEnumerator Sucess() {
+		var tr = this.transform as RectTransform;
+		yield return null;
+		
+		progressbar.colors = new ColorBlock(){colorMultiplier = 1, disabledColor = barColors[2]};
+		yield return new WaitForSeconds(0.8f);
+
+		TerminalActor.currentActiveTerminal.TerminalHacked();
+
+		var pos = tr.anchoredPosition3D;
+		yield return tr.DOScale(Vector3.zero, 0.1f);
+		yield return tr.DOAnchorPos(Vector3.zero, 0.1f);
+		
+		this.gameObject.SetActive(false);
+		tr.anchoredPosition3D = pos;
+	}
+
+	public IEnumerator Failed() {
+
+		turnsLeftText.text = $"{turns} Turns Left";
+		yield return null;
+		progressbar.colors = new ColorBlock(){colorMultiplier = 1, disabledColor = barColors[1]};
+		
+		yield return mainPanel.DOShakeAnchorPos(0.4f, new Vector2(30, 0));
+		yield return new WaitForSeconds(0.8f);
+		this.gameObject.SetActive(false);
+	}
 	
 	public void PressButton(int index, bool inverse = false) {
 		if(index < 0 || index > 5) return;
-
+		
 		var d = forwardButton[index] ? -1 : 1;
 		if (inverse) d *= -1;
 			
@@ -121,13 +144,18 @@ public class HackingGame1Controller : MonoBehaviour {
 			currentCode[(index-3)*3+1] = (4 + currentCode[(index-3)*3+1] + d) % 4;
 			currentCode[(index-3)*3+2] = (4 + currentCode[(index-3)*3+2] + d) % 4;
 		}
-
-		if(!inverse) UpdateImageRotations();
+		
+		if (!inverse) {
+			if (--turns <= 0) { StartCoroutine(Failed()); }
+			else {
+				UpdateImageRotations();
+				turnsLeftText.text = $"{turns} Turns Left";
+			}
+			
+		}
 
 		if (currentCode.All(c => c == 0)) {
-			Debug.Log("OPEN!");
-			TerminalActor.currentActiveTerminal.TerminalHacked();
-			this.gameObject.SetActive(false);
+			StartCoroutine(Sucess());
 		}
 	}
 	

@@ -150,10 +150,10 @@ namespace _Game.ScriptRework.AI {
             SurfaceNets.GenerateSurfaceMesh(vol, 0.5f, out vBuffer, out iBuffer, out uvs);
 
       //      var delta = 0f;//(awareness - awareness)/2.0f +0.5f;
-            
-    //        var gridpos = enemyActor.GridPosition;
-            var forward = new NVector2(this.transform.forward.To2DXZ());
-     //       var right = new NVector2(forward.y, -forward.x);
+
+//            var gridpos = enemyActor.GridPosition;
+//            var forward = new NVector2(this.transform.forward.To2DXZ());
+//            var right = new NVector2(forward.y, -forward.x);
             
             vBuffer = vBuffer.Select(v => this.transform.forward * (v.z -0.5f) + this.transform.right * (v.x - awareness - 0.5f)).ToList();
 

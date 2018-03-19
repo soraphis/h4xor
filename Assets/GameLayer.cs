@@ -33,4 +33,6 @@ public static class GameLayer {
     public const int GlobalProjectorLayerMask = 1 << 10;
     public const int DungeonMapLayer = 11;
     public const int DungeonMapLayerMask = 1 << 11;
+    public const int RoomCollider = 12;
+    public const int RoomColliderMask = 1 << 12;
  }

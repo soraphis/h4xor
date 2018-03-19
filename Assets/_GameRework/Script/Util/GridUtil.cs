@@ -3,7 +3,11 @@ using System.Linq;
 using UnityEngine;
 
 public static class GridUtil {
-    private static Dictionary<NVector2, bool> worldBorderCache;
+    
+    /// <summary>
+    /// true, if the tile is outside of the world border, or static geometry
+    /// </summary>
+    private static readonly HashSet<NVector2> worldBorderCache = new HashSet<NVector2>();
 
     public static Vector3 GridToWorld(Vector2 pos) {
         return new Vector3(pos.x + 0.5f, 0, pos.y + 0.5f);
@@ -67,59 +71,23 @@ public static class GridUtil {
         return true;
     }
 
-    
 
-    /// <summary>
-    /// Checks whether or not you can go to a field or if it is blocked
-    /// </summary>
-    /// <param name="pos">The position of the field to check (in grid coords)</param>
-    /// <returns>true, if you can go there, false otherwise</returns>
-    public static bool IsNotBlocked(Vector2 pos) {
-        if (worldBorderCache == null)
-            InitCache();
-
+    public static bool IsPassable(Vector2 pos) {
         RaycastHit hit;
-        //bool cache = worldBorderCache.ContainsKey(new NVector2((int)pos.x, (int)pos.y));
-        bool cache;
-        if (worldBorderCache.TryGetValue(new NVector2((int)pos.x, (int)pos.y), out cache)) { // Cache hit
-            if (cache)
-            {
-                if (RaycastGrid(pos, out hit))
-                {               // tile in cache and raycast hit
-                    return hit.collider.gameObject.layer == GameLayer.Ground;
-                }
-                else
-                {                                                       // if there is neither a tile or an object 
-                    return false;                                       // the tile is blocked
-                }
-            } else {
-                return false;
-            }
 
-        } else {                                                    // cache miss
-            //The cache doesnt know what's there. Find it out!
-            if (RaycastGrid(pos, out hit)) {
-                //The Ray hit something, so there is ground (-> save it to cache)
-                worldBorderCache.Add(new NVector2((int)pos.x, (int)pos.y), true);
-                //return whether there is just ground or if it is blocked
-                return hit.collider.gameObject.layer == GameLayer.Ground;
-            } else {
-                //The ray hit nothing, save that there is no ground and return false
-                worldBorderCache.Add(new NVector2((int)pos.x, (int)pos.y), false);
-                return false;
-            }
+        if (worldBorderCache.Contains(new NVector2(pos))) { return false; }
+        if (!RaycastGrid(pos, out hit, (GameLayer.DefaultMask | GameLayer.GroundMask | GameLayer.StaticGeometryMask))) {
+            worldBorderCache.Add(new NVector2(pos));
+            return false;
         }
-
-    }    
-
-
-
-    private static void InitCache() {
-        ClearCache();
+        
+        switch (hit.collider.gameObject.layer) {
+            case GameLayer.Ground: return true;
+            case GameLayer.StaticGeometry: worldBorderCache.Add(new NVector2(pos)); goto default;
+            default: return false;
+        }
     }
 
-    public static void ClearCache() {
-        worldBorderCache = new Dictionary<NVector2, bool>();
-    }
+
 
 }

@@ -8,7 +8,7 @@ using _Game.ScriptRework.AI;
 namespace _Game.ScriptRework {
     [RequireComponent(typeof(MovementController))]
     [RequireComponent(typeof(Attributes))]
-    public class EnemyActor : MonoBehaviour, ITickBehaviour {
+    public class EnemyActor : MonoBehaviour, ITickBehaviour, ITakeDamageHandler{
         public bool clipToGrid = false;
         
         private MovementController movementController;
@@ -17,6 +17,8 @@ namespace _Game.ScriptRework {
         
         public GameObject attackPrefab;
         private AIActionSelector actionSelector;
+
+        public AIState State => actionSelector.state;
         
         public NVector2 GridPosition {
             get { return new NVector2(GridUtil.WorldToGrid(this.transform.position)); }
@@ -62,6 +64,14 @@ namespace _Game.ScriptRework {
 
         public void DoAlert() {
             this.actionSelector.state = AIState.Alterted;
+        }
+
+        public void TakeDamage(int value) {
+            this.stats.currentStats.hp -= value;
+            if (this.stats.currentStats.hp <= 0) {
+                // Play death animation
+                this.gameObject.SetActive(false);
+            }
         }
     }
 }

@@ -16,13 +16,13 @@ namespace _Game.ScriptRework.ActionSelectors {
         private Plane plane = new Plane(Vector3.up, Vector3.zero);
         public CharacterAction selectedAction;
 
-        private readonly Subject<CharacterAction> onActionSelectedObservable = new Subject<CharacterAction>();
-        public override UniRx.IObservable<CharacterAction> OnActionSelectedObservable { get { return onActionSelectedObservable.AsObservable(); } }
+        public readonly Subject<CharacterAction> onActionSelectedObservable;
 
-        public MoveActionSelectorState(ref Mesh mesh, ref GameObject fieldSelector, ref Material meshMaterial) {
+        public MoveActionSelectorState(ref Mesh mesh, ref GameObject fieldSelector, ref Material meshMaterial, Subject<CharacterAction> onActionSelectedObservable) {
             this.mesh = mesh;
             this.fieldSelector = fieldSelector;
             this.meshMaterial = meshMaterial;
+            this.onActionSelectedObservable = onActionSelectedObservable;
         }
 
         public override void OnEnable() {             
@@ -64,7 +64,11 @@ namespace _Game.ScriptRework.ActionSelectors {
             }
 
         }
-        
+
+        public override void UIActionDone(CharacterAction action) {                     
+            onActionSelectedObservable.OnNext(action);
+        }
+
         private void CalculateWalkableTiles() {
             var player = PlayerActor.Instance;
             var distance = player.stats.currentStats.speed;

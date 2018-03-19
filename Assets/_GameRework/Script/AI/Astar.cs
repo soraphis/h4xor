@@ -65,7 +65,7 @@ public static class Astar
             child.parent = current;
             
             // check if point available
-            if(! GridUtil.IsNotBlocked(child.point)) continue;
+            if(! GridUtil.IsPassable(child.point)) continue;
             
             if(closedlist.Contains(child)) continue;
             child.distance = current.distance + 1;
@@ -82,7 +82,7 @@ public static class Astar
         
         openlist.Enqueue(new Node(from));
 
-        distance = GridUtil.IsNotBlocked(to) ? 0 : distance;
+        distance = GridUtil.IsPassable(to) ? 0 : distance;
         
         do {
             var current = openlist.Dequeue();
@@ -119,7 +119,7 @@ public static class Astar
             child.parent = current;
             
             // check if point available
-            if(! GridUtil.IsNotBlocked(child.point)) continue;
+            if(! GridUtil.IsPassable(child.point)) continue;
             
             if(closedlist.Contains(child)) continue;
             child.distance = current.distance + 1;

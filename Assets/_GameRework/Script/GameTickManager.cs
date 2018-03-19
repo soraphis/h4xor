@@ -14,9 +14,18 @@ namespace _Game.ScriptRework {
         private PlayerActor player;
 
         public bool exitGame = false;
-
         public event Action Gizmos;
+        private EnterRoom activeRoom;
 
+        public EnterRoom ActiveRoom {
+            set {
+                activeRoom?.DeactivateRoom();
+                activeRoom = value;
+                activeRoom.ActivateRoom();
+            }
+            get { return activeRoom; }
+        }
+        
 
         void Awake() {
             var x = CameraFadeScript.SetupCameraFade();
@@ -31,7 +40,7 @@ namespace _Game.ScriptRework {
             while (!loadUIScene.isDone) { yield return null; }
             yield return CameraFadeScript.FadeIn(1.4f);
             
-            Tick();
+            yield return Tick();
         }
 
         

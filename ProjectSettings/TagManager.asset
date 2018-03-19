@@ -20,7 +20,7 @@ TagManager:
   - StaticGeometry
   - GlobalProjectorLayer
   - DungeonMapLayer
-  - 
+  - RoomCollider
   - 
   - 
   - 

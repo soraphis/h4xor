@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using UniRx;
 using UnityEngine;
 using _Game.ScriptRework.ActionSelectors;
 
@@ -15,6 +17,8 @@ namespace _Game.ScriptRework {
         public MovementController movementController;
         public Attributes stats;
 
+        private Subject<CharacterAction> onActionSelectedObservable = new Subject<CharacterAction>();
+        
         public NVector2 GridPosition {
             get { return new NVector2(GridUtil.WorldToGrid(this.transform.position)); }
         }
@@ -29,6 +33,7 @@ namespace _Game.ScriptRework {
 
         private void Awake() {
             actionSelector = GetComponent<ActionSelectorSM>();
+            actionSelector.onActionSelectedObservable = onActionSelectedObservable;
             movementController = GetComponent<MovementController>();
             stats = GetComponent<Attributes>();
         }
@@ -43,7 +48,7 @@ namespace _Game.ScriptRework {
             ComponentsEnabled(true);
             
             actionSelector.enabled = true;
-            var action = await actionSelector.OnActionSelectedObservable;
+            var action = await onActionSelectedObservable.AsObservable();
             actionSelector.enabled = false;
             
             // do action
@@ -53,11 +58,23 @@ namespace _Game.ScriptRework {
         }
 
 
-        public void TakeDamage(int value) {
+        public async void TakeDamage(int value) {
             this.stats.currentStats.hp -= value;
             if (this.stats.currentStats.hp <= 0) {
-                
+                await Respawn();
             }
         }
+
+        private async Task Respawn() {
+            this.gameObject.SetActive(false);
+            await Observable.Timer(TimeSpan.FromSeconds(1));
+            await CameraFadeScript.FadeOut(0).ToObservable();
+            this.stats.currentStats.hp = this.stats.attributes.attributes.hp;
+            this.transform.position = GridUtil.GridToWorld(GameTickManager.Instance.ActiveRoom.playerEnterTile);
+            this.movementController.ResetDesiredPosition();
+            this.gameObject.SetActive(true);
+            await CameraFadeScript.FadeIn(1.2f).ToObservable();
+        }
+        
     }
 }

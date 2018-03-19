@@ -1,4 +1,5 @@
 ﻿using System;
+using UniRx;
 using UnityEngine;
 
 namespace _Game.ScriptRework.ActionSelectors {
@@ -8,6 +9,8 @@ namespace _Game.ScriptRework.ActionSelectors {
         /**    INSPECTOR VARIABLES    */
         public Material walk_material;
         public Material attack_material;
+        public Mesh selectionCircleMesh;
+        public Material selectionCircleMaterial;
         
         public GameObject fieldSelectorPrefab;
         
@@ -17,7 +20,7 @@ namespace _Game.ScriptRework.ActionSelectors {
         private GameObject fieldSelector;
         
         public ActionSelectorState currentState = null;
-        public UniRx.IObservable<CharacterAction> OnActionSelectedObservable => currentState.OnActionSelectedObservable;
+        public Subject<CharacterAction> onActionSelectedObservable; // set from outside
 
         public event Action OnEnableSelector, OnDisableSelector;
         
@@ -41,7 +44,7 @@ namespace _Game.ScriptRework.ActionSelectors {
         
         private void OnEnable() {
             if (currentState == null) {
-                currentState = new MoveActionSelectorState(ref mesh, ref fieldSelector, ref walk_material); 
+                SwitchToMovementSelection();
             }
             OnEnableSelector?.Invoke();
             currentState.OnEnable();
@@ -49,7 +52,7 @@ namespace _Game.ScriptRework.ActionSelectors {
 
         private void OnDisable() {
             OnDisableSelector?.Invoke();
-            currentState.OnDisable();
+            currentState?.OnDisable();
         }
 
         private void Update() {
@@ -59,20 +62,20 @@ namespace _Game.ScriptRework.ActionSelectors {
 
         /**    Detail Implementation    */
 
-        public void UIActionDone(CharacterAction action) {
-            
+        public void UIActionDone(CharacterAction action) { currentState.UIActionDone(action); }
+
+        private void ChangeState(Action action) {
+            currentState?.OnDisable();
+            action();
+            if(this.enabled) currentState.OnEnable();
         }
         
         public void SwitchToMovementSelection() {
-            currentState = new MoveActionSelectorState(ref mesh, ref fieldSelector, ref walk_material);
-            if(this.enabled) currentState.OnEnable(); 
+            ChangeState(() => currentState = new MoveActionSelectorState(ref mesh, ref fieldSelector, ref walk_material, onActionSelectedObservable));
         }
 
         public void SwitchToAttackSelection() {
-            
-            // TODO: CHANGEME!
-            currentState = new MoveActionSelectorState(ref mesh, ref fieldSelector, ref attack_material);
-            if(this.enabled) currentState.OnEnable();
+            ChangeState(() => currentState = new SelectEnemyActionSelector(onActionSelectedObservable));
         }
         
     }
@@ -83,5 +86,6 @@ namespace _Game.ScriptRework.ActionSelectors {
         public abstract void OnEnable();
         public abstract void OnDisable();
         public abstract void Update(ActionSelectorSM self);
+        public abstract void UIActionDone(CharacterAction action);
     }
 }

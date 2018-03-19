@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: bd7e963ad549a4643bcc085b51e6c869
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - scanClip: {fileID: 8300000, guid: c0dd917cdff93ec44b8f87518f223eba, type: 3}
+  - minimapMask: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
