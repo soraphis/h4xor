@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using UnityEditor.Experimental.Build.Player;
+﻿using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using _Game.ScriptRework;
 using _Game.ScriptRework.ActionSelectors;
@@ -45,6 +38,8 @@ public class ButtonEnableConditions : MonoBehaviour {
 	public bool isPlayersOnTerminal() { return TerminalActor.currentActiveTerminal != null; }
 	public bool isPlayerInAttackMode() { return PlayerActor.Instance.actionSelector.currentState.GetType() == typeof(SelectEnemyActionSelector); }
 	public bool isPlayerInMoveMode() { return PlayerActor.Instance.actionSelector.currentState.GetType() == typeof(MoveActionSelectorState); }
+	
+	public bool hasPlayerLearnedAttack() { return PlayerActor.Instance.HasLearnedAttack; }
 	
 	public bool isPermanentDisabled() { return false;  }
 	

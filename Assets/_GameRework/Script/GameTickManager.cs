@@ -2,10 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Gamelogic.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using _Game.ScriptRework.AI;
 
 namespace _Game.ScriptRework {
     public class GameTickManager : Singleton<GameTickManager> {

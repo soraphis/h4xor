@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Linq;
 using DG.Tweening;
-using ProBuilder2.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -88,7 +85,6 @@ public class HackingGame1Controller : MonoBehaviour {
 	}
 
 	public void OnDisable() {
-		Debug.Log("disabled!");
 		PlayerActor.Instance.actionSelector.enabled = true;
 		PlayerActor.Instance.actionSelector.UIActionDone(new IdleAction());
 	}
@@ -107,13 +103,9 @@ public class HackingGame1Controller : MonoBehaviour {
 		yield return new WaitForSeconds(0.8f);
 
 		TerminalActor.currentActiveTerminal.TerminalHacked();
-
-		var pos = tr.anchoredPosition3D;
 		yield return tr.DOScale(Vector3.zero, 0.1f);
-		yield return tr.DOAnchorPos(Vector3.zero, 0.1f);
 		
 		this.gameObject.SetActive(false);
-		tr.anchoredPosition3D = pos;
 	}
 
 	public IEnumerator Failed() {

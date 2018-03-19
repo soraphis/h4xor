@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
-using UniRx;
 using UnityEngine;
 
 namespace _Game.ScriptRework.AI {

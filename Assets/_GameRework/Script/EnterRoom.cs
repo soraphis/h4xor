@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Gamelogic.Extensions.Algorithms;
 using UnityEngine;
 using _Game.ScriptRework;
 
@@ -23,6 +21,8 @@ public class EnterRoom : MonoBehaviour {
     }
     
     public void ActivateRoom() {
+        AudioSource.PlayClipAtPoint(scanClip, PlayerActor.Instance.transform.position);
+
         minimapMask.SetActive(false);
         for (var i = 0; i < roomEnemies.Count; ++i) {
             // GameTickManager.Instance.activeEnemies.AddRange(roomEnemies);

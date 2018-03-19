@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Gamelogic.Extensions;
+﻿using Gamelogic.Extensions;
 using UnityEngine;
-using _Game.ScriptRework;
 
 public class BackgroundParallax : MonoBehaviour {
 

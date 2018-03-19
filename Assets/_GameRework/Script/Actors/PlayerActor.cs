@@ -17,6 +17,10 @@ namespace _Game.ScriptRework {
         public MovementController movementController;
         public Attributes stats;
 
+        public bool HasLearnedAttack { get; set; }
+
+        [SerializeField] private AudioClip[] hitSounds = new AudioClip[0];
+
         private Subject<CharacterAction> onActionSelectedObservable = new Subject<CharacterAction>();
         
         public NVector2 GridPosition {
@@ -59,6 +63,7 @@ namespace _Game.ScriptRework {
 
 
         public async void TakeDamage(int value) {
+            AudioSource.PlayClipAtPoint(hitSounds[UnityEngine.Random.Range(0, hitSounds.Length)], this.transform.position);
             this.stats.currentStats.hp -= value;
             if (this.stats.currentStats.hp <= 0) {
                 await Respawn();

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
+﻿using System.Linq;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
@@ -21,7 +17,7 @@ public class TerminalActor : MonoBehaviour {
 	
 	public static TerminalActor currentActiveTerminal;
 	
-	public event Action OnDisable;
+	// public event Action OnDisable;
 	public UnityEvent OnTerminalDisabled;
 
 	void OnValidate() {
@@ -42,8 +38,10 @@ public class TerminalActor : MonoBehaviour {
 	}
 
 	public void TerminalHacked() {
-		if (OnDisable != null) OnDisable.Invoke();
+		// if (OnDisable != null) OnDisable.Invoke();
 		OnTerminalDisabled.Invoke();
+		this.enabled = false;
+		if (currentActiveTerminal == this) currentActiveTerminal = null;
 	}
 
 	public void TerminalWireShutdown(LineRenderer ren) {
@@ -52,7 +50,8 @@ public class TerminalActor : MonoBehaviour {
 	
 	void OnEnterField(bool step){
 		if(! step) return;
-
+		if(! this.enabled) return;
+		
 		if (PlayerActor.Instance.GridPosition != GridUtil.WorldToGrid(terminalField.position)) {
 			animator.SetBool("Active", false);
 

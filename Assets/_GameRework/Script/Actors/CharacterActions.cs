@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UniRx;
 using UnityEngine.EventSystems;
 
 namespace _Game.ScriptRework {
