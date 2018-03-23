@@ -59,6 +59,11 @@ namespace _Game.ScriptRework {
             ComponentsEnabled(false);
         }
 
+        public void DoCalm() {
+            this.actionSelector.state = AIState.Default;
+            
+        }
+        
         public void DoAlert() {
             this.actionSelector.state = AIState.Alterted;
         }

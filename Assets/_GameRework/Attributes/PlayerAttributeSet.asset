@@ -15,5 +15,5 @@ MonoBehaviour:
     atk: 1
     hp: 5
     def: 0
-    awareness: 4
+    awareness: 7
     speed: 5

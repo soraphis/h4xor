@@ -12,6 +12,8 @@ public class IntroAnimation : MonoBehaviour {
 	public GameObject[] messages;
 	public int[] jack_messages = new int[]{4, 5, 7};
 
+
+	private bool wantSkip = false;
 	void Awake() {
 		foreach (var message in messages) {
 			message.SetActive(false);
@@ -25,6 +27,7 @@ public class IntroAnimation : MonoBehaviour {
 		yield return new WaitForSeconds(0.5f);
 
 		for (int i = 0; i < messages.Length; ++i) {
+			if (wantSkip) break;
 			var text = messages[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>();
 			if (jack_messages.Contains(i)) {
 				if(! jack_messages.Contains(i-1)) yield return new WaitForSeconds(2f);
@@ -53,6 +56,7 @@ public class IntroAnimation : MonoBehaviour {
 	void Update() {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			// escape -> rdy to skip!
+			wantSkip = true;
 		}
 	}
 	

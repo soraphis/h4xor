@@ -42,6 +42,12 @@ public class EnterRoom : MonoBehaviour {
         if (c != null) {
             roomEnemies.Add((EnemyActor)c);
             positions.Add(c.transform.position);
+
+            Physics.IgnoreCollision(this.GetComponent<Collider>(), c.GetComponent<Collider>());
+            
+            if (GameTickManager.Instance.ActiveRoom == this) {
+                c.gameObject.SetActive(false);                
+            }
             return;
         }
         c = other.GetComponent<PlayerActor>();

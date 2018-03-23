@@ -19,6 +19,7 @@ public class HackingGame1Controller : MonoBehaviour {
 	[SerializeField] private RectTransform mainPanel;
 	[SerializeField] private TextMeshProUGUI turnsLeftText;
 	[SerializeField] private Image[] images;
+	[SerializeField] private Sprite[] buttonImages;
 	[SerializeField] private Button[] buttons;
 	[SerializeField] private bool[] forwardButton;
 	
@@ -54,12 +55,11 @@ public class HackingGame1Controller : MonoBehaviour {
 		}
 		
 		OnValidate();
-		// "" ""
 		
 		currentCode = new int[9];
 		
 		for (int i = 0; i < 6; ++i) {
-			buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = forwardButton[i] ? "" : "";
+			buttons[i].transform.GetChild(0).GetComponentInChildren<Image>().sprite = buttonImages[forwardButton[i] ? 0 : 1];
 			buttons[i].onClick.RemoveAllListeners();
 
 			int j = i;
