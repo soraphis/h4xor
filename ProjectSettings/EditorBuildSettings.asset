@@ -17,3 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_GameRework/Scenes/3SomeHUDScene.unity
     guid: 7f6063deb4c40f745b6ac234e5a1ebaf
+  - enabled: 1
+    path: Assets/_GameRework/Scenes/Credits.unity
+    guid: d3341eebd9d33445b93328a5b512aa93
