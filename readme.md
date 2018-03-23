@@ -1,4 +1,5 @@
-play the game here https://soraphis.github.io/h4xor/
+- play the game here: https://soraphis.github.io/h4xor/
+- original project can be found here: https://gitlab.fsi.hochschule-trier.de/GDW-SS-17/unity/h4x0r
 
 # Projekt aufsetzen
 
